@@ -33,7 +33,7 @@ df = generar_datos_empresa()
 
 
 # Título principal
-st.markdown('<h1 class="main-header">🏆 Dashboard Company 20025</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">🏆 Dashboard Company 2025</h1>', unsafe_allow_html=True)
 
 # filtros de búsqueda
 col1,col2,col3 = st.columns(3)
@@ -87,3 +87,32 @@ with col2:
     funnel = go.Figure(go.Funnel(y=etapas, x=valores, textinfo='value+percent initial'))
     funnel.update_layout(title='🎯 Funnel de Conversión', height=400, template='plotly_white')
     st.plotly_chart(funnel, use_container_width=True)
+
+# Mapa de calor 
+st.markdown('## 🌡 Análisis Geográfico')
+paises = ['España', 'Francia', 'Alemania', 'Italia', 'Portugal', 'Bélgica']
+venta_pais = np.random.uniform(10000,100000, len(paises))
+mapa = px.bar(x=paises, y=venta_pais, color=venta_pais, color_continuous_scale='Viridis', title='💶 Ventas por Región')
+mapa.update_layout(height=400, template='plotly_white', showlegend=False)
+st.plotly_chart(mapa,use_container_widt=True)
+
+# Alertas Inteligentes
+st.markdown('## 🚨 Alertas Inteligentes')
+alertas = []
+
+if df['ingresos_diarios'].tail(7).mean() < df['ingresos_diarios'].head(-7).mean():
+    alertas.append({'tipo': '⚠ Advertencia', 'mensaje': 'Ingresos por debajo del promedio en últimos 7 días', 'color': 'orange'})
+    
+if df['conversion_rate'].tail(7).iloc[0] < 2.0:   
+    alertas.append({'tipo' : '🔴 Crítico', 'mensaje' : 'Tasa de conversión < 2% Acción inmediata requerida', 'color': 'red'})
+
+if df['usuarios_activos'].tail(1).iloc[0] > df['usuarios_activos'].quantile(0.9):
+    alertas.append({'tipo': '🎉✨ Éxito', 'mensaje': 'Usuarios activos en top 10% historico', 'color':'green'})
+
+for alerta in alertas:
+    st.markdown(f'''
+    <div style='padding:1rem; margin:0.5rem 0; background-color: {alerta['color']};
+                color:white; border-radius: 10px; font-weight: bold;'>
+        {alerta['tipo']}: {alerta['mensaje']}
+    </div>
+    ''', unsafe_allow_html=True)
