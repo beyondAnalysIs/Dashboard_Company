@@ -31,7 +31,6 @@ def generar_datos_empresa():
 
 df = generar_datos_empresa()
 
-
 # Título principal
 st.markdown('<h1 class="main-header">🏆 Dashboard Company 2025</h1>', unsafe_allow_html=True)
 
